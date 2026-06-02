@@ -4,55 +4,51 @@
 using namespace std;
 class User{
 protected:
-    string password,fpassword;
+    string password,temp_password;
 public:
     fstream book_file;
+    string id;
     string nam ;
-    string email ;
-    string fusername;
-    string femail_adress;
     string name; 
+    string temp_username;
+    string email ;
+    string email_id;
+    string temp_email_adress;
     string pass;
     string book;
     string auther;
-    string id;
-    long long mobile_no;
-    string email_id;
+    size_t mobile_no;
 };
 class Public : public User{
 private:
-fstream Pub_file;
+fstream public_login_file;
 
 public:
     void show_all_books(){
         cout << "---------------------------All Books--------------------------------------------------" << endl;
         cout << "\t" << "Book ID" << "\t\t" << "Book Name" << "\t\t\t" << "Auther Name" << endl;
+
         book_file.open("Book_list.txt" , ios :: in);
-        getline(book_file,id,'*');
-        getline(book_file,book,'*');
-        getline(book_file,auther,'\n');
-        while(!book_file.eof()){
+
+        while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n');){
             cout << "\t" << id << "\t\t" << book << "\t\t\t" << auther << endl;
-            getline(book_file,id,'*');
-            getline(book_file,book,'*');
-            getline(book_file,auther,'\n');
         }
         cout << "---------------------------------------------------" << endl;
         return;
     }
 
     void choos_book(){
-        string fid;
+        string find_book;
         cout << "----------------------Liabrari--------------------" <<endl;
         cout << "Type book you want to read" << endl;
         cin.ignore();
-        getline(cin,fid);
+        getline(cin,find_book);
         book_file.open("Book_list.txt",ios :: in);
         getline(book_file,id,'*');
         getline(book_file,book,'*');
         getline(book_file,auther,'\n');
         while(!book_file.eof()){
-            if(fid == id){
+            if(find_book == id){
                 cout << "Book opened:" <<endl;
                 return;
             }
@@ -71,15 +67,15 @@ public:
         getline(cin,email);
          cout << "Enter your Password : " ;
         getline(cin,pass);
-        Pub_file.open("Public_logins.txt" , ios::in);
-        getline(Pub_file,name,'*');
-        getline(Pub_file,email_id,'*');
-        getline(Pub_file,password,'\n');
-        while(!Pub_file.eof()){
+        public_login_file.open("Public_logins.txt" , ios::in);
+        getline(public_login_file,name,'*');
+        getline(public_login_file,email_id,'*');
+        getline(public_login_file,password,'\n');
+        while(!public_login_file.eof()){
             if(!(nam == name)){
-                getline(Pub_file,name,'*');
-                getline(Pub_file,email_id,'*');
-                getline(Pub_file,password,'\n');
+                getline(public_login_file,name,'*');
+                getline(public_login_file,email_id,'*');
+                getline(public_login_file,password,'\n');
                 continue;
             }
             if(!(email_id == email)){
@@ -94,7 +90,7 @@ public:
             choos_book();
             return;
         }
-        Pub_file.close();
+        public_login_file.close();
         cout<<"Could not find id " << endl << endl << "Pleas try again " << endl;
         login();
         return;
@@ -102,14 +98,14 @@ public:
     void registe(){
         cout << "----------------Register-------------------" << endl;
         cout << "Enter username : ";
-        getline(cin, fusername);
+        getline(cin, temp_username);
         cout << "Enter email adress : ";
-        getline(cin, femail_adress);
+        getline(cin, temp_email_adress);
         cout << "Enter password : ";
-        getline(cin, fpassword);
-        Pub_file.open("Public_logins.txt", ios ::out | ios::app);
-        Pub_file << fusername << "*" << femail_adress << "*" << fpassword << endl;
-        Pub_file.close();
+        getline(cin, temp_password);
+        public_login_file.open("Public_logins.txt", ios ::out | ios::app);
+        public_login_file << temp_username << "*" << temp_email_adress << "*" << temp_password << endl;
+        public_login_file.close();
         cout << "Registration Sucessfull" << endl;
         return;
     }
@@ -117,7 +113,7 @@ public:
 }Pub;
 class Admin : public User{
 private:
-    fstream Admin_file;
+    fstream Admin_login_file;
 public:
     void remove_book(){}
     void add_book(){
@@ -168,15 +164,15 @@ public:
         getline(cin,email);
          cout << "Enter your Password : " ;
         getline(cin,pass);
-        Admin_file.open("Admin_logins.txt" , ios::in);
-        getline(Admin_file,name,'*');
-        getline(Admin_file,email_id,'*');
-        getline(Admin_file,password,'\n');
-        while(!Admin_file.eof()){
+        Admin_login_file.open("Admin_logins.txt" , ios::in);
+        getline(Admin_login_file,name,'*');
+        getline(Admin_login_file,email_id,'*');
+        getline(Admin_login_file,password,'\n');
+        while(!Admin_login_file.eof()){
             if(!(nam == name)){
-                getline(Admin_file,name,'*');
-                getline(Admin_file,email_id,'*');
-                getline(Admin_file,password,'\n');
+                getline(Admin_login_file,name,'*');
+                getline(Admin_login_file,email_id,'*');
+                getline(Admin_login_file,password,'\n');
                 continue;
             }
             if(!(email_id == email)){
@@ -192,81 +188,80 @@ public:
             menu();
             return;
         }
-        Admin_file.close();
+        Admin_login_file.close();
         cout << "Could not find id try again" << endl;
         login();
         return;
     }
     void registe(){
         cout << "Enter username : ";
-        getline(cin, fusername);
+        getline(cin, temp_username);
         cout << "Enter email adress : ";
-        getline(cin, femail_adress);
+        getline(cin, temp_email_adress);
         cout << "Enter password : ";
-        getline(cin, fpassword);
-        Admin_file.open("Admin_logins.txt", ios ::out | ios::app);
-        Admin_file << fusername << "*" << femail_adress << "*" << fpassword << endl;
-        Admin_file.close();
+        getline(cin, temp_password);
+        Admin_login_file.open("Admin_logins.txt", ios ::out | ios::app);
+        Admin_login_file << temp_username << "*" << temp_email_adress << "*" << temp_password << endl;
+        Admin_login_file.close();
         cout << "Registration Sucessfull" << endl;
-        Admin_file.close();
+        Admin_login_file.close();
         return;
     }
 }Adm;
 void regis(){
-    cout << "------------------------" <<endl;
-    cout << "1. Login as new user" <<endl;
-    cout << "2. New Admin register" << endl;
-    cout << "3. Return " << endl;
-    char ch;
-    cin >> ch;
-    switch (ch){
-        case '1':
-            cin.ignore();
-            Pub.registe();
-            return;
-        case '2':
-            cin.ignore();
-            Adm.registe();
-            return;
-        case '3':
-            cin.ignore();
-            return;
-        default:
-            cout << "Invalid opration"<< endl;
-            regis();
-            break;
+    while(true){
+        cout << "------------------------" <<endl;
+        cout << "1. Login as new user" <<endl;
+        cout << "2. New Admin register" << endl;
+        cout << "3. Return " << endl;
+        char ch;
+        cin >> ch;
+        switch (ch){
+            case '1':
+                cin.ignore();
+                Pub.registe();
+                return;
+            case '2':
+                cin.ignore();
+                Adm.registe();
+                return;
+            case '3':
+                cin.ignore();
+                return;
+            default:
+                cout << "Invalid opration"<< endl;
+                regis();
+                break;
+        }
     }
+    return;
 }
 void login_menu(){
-    cout << "--------Labriry Management-----------" <<endl;
-    cout << "1. Enter as Student" << endl;
-    cout << "2. Enter as Teacher" << endl;
-    cout << "3. Register" << endl;
-    cout << "4. Exit" << endl;
-    char ch;
-    cin >> ch;
-    switch(ch){
-        case '1':
-            cin.ignore();
-            Pub.login();
-            login_menu();
-            return;
-        case '2':
-            cin.ignore();
-            Adm.login();
-            login_menu();
-            return;
-        case '3':
-            cin.ignore();
-            regis();
-            login_menu();
-            return;
-        case '4':
-            return;
-        default:
-            cout << "Incorrect input " << endl;
-            login_menu;
-            return;  
+    while(true)
+    {
+        cout << "--------Labriry Management-----------" <<endl;
+        cout << "1. Enter as Student" << endl;
+        cout << "2. Enter as Teacher" << endl;
+        cout << "3. Register" << endl;
+        cout << "4. Exit" << endl;
+        char ch;
+        cin >> ch;
+        switch(ch){
+            case '1':
+                cin.ignore();
+                Pub.login();
+            case '2':
+                cin.ignore();
+                Adm.login();
+            case '3':
+                cin.ignore();
+                regis();
+            case '4':
+                return;
+            default:
+                cout << "Incorrect input " << endl;
+                cout << "Try again" << endl;
+        } 
     }
     return;
 }
