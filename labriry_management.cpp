@@ -30,7 +30,7 @@ public:
 
         book_file.open("Book_list.txt" , ios :: in);
 
-        while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n');){
+        while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
             cout << "\t" << id << "\t\t" << book << "\t\t\t" << auther << endl;
         }
         cout << "---------------------------------------------------" << endl;
