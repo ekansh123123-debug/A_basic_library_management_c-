@@ -1,6 +1,8 @@
 #include<iostream>
 #include<fstream>
 #include<string>
+
+
 class User{
 protected:
     std::string password,temp_password;
@@ -18,7 +20,11 @@ public:
     std::string auther;
     size_t mobile_no;
 };
+
+
+
 class Public : public User{
+
 private:
 std::fstream public_login_file;
 
@@ -35,78 +41,102 @@ public:
         std::cout << "---------------------------------------------------" << std::endl;
         return;
     }
-
+    bool valid_book_id(std::string book_id){
+        book_file.open("Book_list.txt",std::ios :: in);
+        while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
+            if(book_id == id){
+                std::cout << "Book opened:" <<std::endl;
+                book_file.close();
+                return true;
+            }
+        }
+        book_file.close();
+        return false;
+    }
     void choos_book(){
         std::string book_id;
         std::cout << "----------------------Liabrari--------------------" <<std::endl;
         std::cout << "Type book you want to read" << std::endl;
         std::cin.ignore();
         getline(std::cin,book_id);
-        book_file.open("Book_list.txt",std::ios :: in);
-        while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
-            if(book_id == id){
-                std::cout << "Book opened:" <<std::endl;
-                book_file.close();
-                return;
-            }
-        }
+        if(valid_book_id)
+            std::cout << "book opened" << std::endl;
+        else
+            std::cout << "Incorect book ID \n Try again" << std::endl;
         return;
     }
-    void login(){
-        std::cout << "----------------------Login------------------------" <<std::endl;
-        std::cout << "Enter your Name : " ;
-        getline(std::cin,nam);
-         std::cout << "Enter your Email Id : " ;
-        getline(std::cin,email);
-         std::cout << "Enter your Password : " ;
-        getline(std::cin,pass);
+    bool id_exist(std::string name , std::string email , std::string password){
         public_login_file.open("Public_logins.txt" , std::ios::in);
-        getline(public_login_file,name,'*');
-        getline(public_login_file,email_id,'*');
-        getline(public_login_file,password,'\n');
-        while((!(public_login_file.eof())) && (getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n'))){
-            if(nam != name){
-                continue;
+    
+        while((!(public_login_file.eof())) &&
+                getline(public_login_file,temp_username,'*') &&
+                getline(public_login_file,temp_email_adress,'*') &&
+                getline(public_login_file,temp_password,'\n'))
+            {
+            
+                if(name != temp_username){
+                    continue;
+                }
+        
+                if(email_id != email){
+                    return false;
+                }
+        
+                if(pass != password){
+                    return false;
+                }
+        
+                return true;
             }
-            if(email_id != email){
-                std::cout << "Email not found " << std::endl;
-                break;
-            }
-            if(pass != password){
-                std::cout << "Incorect password " <<std::endl;
-                break;
-            }
-            show_all_books();
-            choos_book();
-            public_login_file.close();
-            return;
-        }
         public_login_file.close();
-        std::cout<<"Could not find id " << std::endl << std::endl << "Pleas try again " << std::endl;
-        login();
+    }
+    void login(){
+        std::cout << "----------------------Login Meniu------------------------" <<std::endl;
+
+        std::cout << "Enter your Name : " ;
+        getline(std::cin, name);
+
+         std::cout << "Enter your Email Id : " << std::endl;
+        getline(std::cin, email);
+
+         std::cout << "Enter your Password : " << std::endl;
+        getline(std::cin, password);
+
+        if(id_exist(name, email, password))
+            login();
+        else
+            std::cout<<"Could not find id " << std::endl << std::endl << "Pleas try again " << std::endl;
         return;
     }
     void registe(){
         std::cout << "----------------Register-------------------" << std::endl;
         std::cout << "Enter username : ";
         getline(std::cin, temp_username);
+
         std::cout << "Enter email adress : ";
         getline(std::cin, temp_email_adress);
+
         std::cout << "Enter password : ";
         getline(std::cin, temp_password);
+
         public_login_file.open("Public_logins.txt", std::ios ::out | std::ios::app);
         public_login_file << temp_username << "*" << temp_email_adress << "*" << temp_password << std::endl;
         public_login_file.close();
+        
         std::cout << "Registration Sucessfull" << std::endl;
         return;
     }
     
 }Pub;
+
+
+//Admin class start
 class Admin : public User{
 private:
     std::fstream Admin_login_file;
 public:
-    void remove_book(){}
+    //void remove_book(){}
+    
     void add_book(){
         std::cout << "--------------------------------------------------" <<std::endl;
         std::cout << "Enter book id :: " ;
@@ -121,84 +151,93 @@ public:
         book_file.close();
         return;
     }
+
     void menu(){
         std::cout << "-------------------------Libery Admin Section-------------------------------" << std::endl;
-        std::cout << "Enter what you want to do " << std::endl;
-        std::cout << "1. Add New book " << std::endl;
-        std::cout << "2. Remove Book " << std::endl;
-        std::cout << "3. Exit " << std::endl;
-        char choise;
-        std::cin>> choise;
-        switch(choise){
-            case '1':
-                add_book();
-                menu();
-                return;
-            case '2':
-                remove_book();
-                menu();
-                return;
-            case '3':
-                return;
-            default:
-                std::cout << "Invalid opration " << std::endl << std::endl << "Try again" << std::endl;
-                menu();
-                return;
+        while(true){
+            std::cout << "Enter what you want to do " << std::endl;
+            std::cout << "1. Add New book " << std::endl;
+            std::cout << "2. Remove Book " << std::endl;
+            std::cout << "3. Exit " << std::endl;
+            char choise;
+            std::cin>> choise;
+            switch(choise){
+                case '1':
+                    add_book();
+                    break;
+                case '2':
+                    //remove_book();
+                    break;
+                case '3':
+                    return;
+                default:
+                    std::cout << "Invalid opration " << std::endl << std::endl << "Try again" << std::endl;
+            }
         }
         return;
     }
+    bool id_exist(std::string name , std::string email , std::string password){
+        Admin_login_file.open("Admin_logins.txt" , std::ios::in);
+    
+        while((!(Admin_login_file.eof())) &&
+                getline(Admin_login_file,temp_username,'*') &&
+                getline(Admin_login_file,temp_email_adress,'*') &&
+                getline(Admin_login_file,temp_password,'\n'))
+            {
+            
+                if(name != temp_username){
+                    continue;
+                }
+        
+                if(email_id != email){
+                    return false;
+                }
+        
+                if(pass != password){
+                    return false;
+                }
+        
+                return true;
+            }
+        }
     void login(){
         std::cout << "----------------------------" <<std::endl;
         std::cout << "Enter your Name : " ;
-        getline(std::cin,nam);
+        getline(std::cin,name);
          std::cout << "Enter your Email Id : " ;
         getline(std::cin,email);
          std::cout << "Enter your Password : " ;
-        getline(std::cin,pass);
-        Admin_login_file.open("Admin_logins.txt" , std::ios::in);
-        getline(Admin_login_file,name,'*');
-        getline(Admin_login_file,email_id,'*');
-        getline(Admin_login_file,password,'\n');
-        while(!Admin_login_file.eof()){
-            if(!(nam == name)){
-                getline(Admin_login_file,name,'*');
-                getline(Admin_login_file,email_id,'*');
-                getline(Admin_login_file,password,'\n');
-                continue;
-            }
-            if(!(email_id == email)){
-                std::cout << "Incorrect password" << std::endl << std::endl << "Try again "<< std::endl;
-                login();
-                return;
-            }
-            if(!(pass == password)){
-                std::cout << "Incorect password " <<std::endl << std::endl << "Try again" << std::endl;
-                login();
-                return;
-            }
-            menu();
+        getline(std::cin,password);
+        if(id_exist(name, email , password)){
+            menu;
             return;
         }
-        Admin_login_file.close();
-        std::cout << "Could not find id try again" << std::endl;
-        login();
+        else
+            std::cout << "Could not find id try again" << std::endl;
         return;
     }
+
     void registe(){
         std::cout << "Enter username : ";
         getline(std::cin, temp_username);
+
         std::cout << "Enter email adress : ";
         getline(std::cin, temp_email_adress);
+
         std::cout << "Enter password : ";
         getline(std::cin, temp_password);
+
         Admin_login_file.open("Admin_logins.txt", std::ios ::out | std::ios::app);
         Admin_login_file << temp_username << "*" << temp_email_adress << "*" << temp_password << std::endl;
         Admin_login_file.close();
+
         std::cout << "Registration Sucessfull" << std::endl;
-        Admin_login_file.close();
         return;
     }
 }Adm;
+
+// Admin class ends
+
 void regis(){
     while(true){
         std::cout << "------------------------" <<std::endl;
@@ -231,6 +270,7 @@ void login_menu(){
     while(true)
     {
         std::cout << "--------Labriry Management-----------" <<std::endl;
+        std::cout << "Press" << std::endl;
         std::cout << "1. Enter as Student" << std::endl;
         std::cout << "2. Enter as Teacher" << std::endl;
         std::cout << "3. Register" << std::endl;
