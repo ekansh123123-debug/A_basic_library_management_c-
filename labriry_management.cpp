@@ -35,14 +35,17 @@ public:
 
         book_file.open("Book_list.txt" , std::ios :: in);
 
-        while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
+        while(!book_file.eof() && getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
             std::cout << "\t" << id << "\t\t" << book << "\t\t\t" << auther << std::endl;
         }
+
         std::cout << "---------------------------------------------------" << std::endl;
         return;
     }
+
     bool valid_book_id(std::string book_id){
         book_file.open("Book_list.txt",std::ios :: in);
+
         while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
             if(book_id == id){
                 std::cout << "Book opened:" <<std::endl;
@@ -50,24 +53,29 @@ public:
                 return true;
             }
         }
+
         book_file.close();
         return false;
     }
     void choos_book(){
         std::string book_id;
         std::cout << "----------------------Liabrari--------------------" <<std::endl;
-        std::cout << "Type book you want to read" << std::endl;
+
+        std::cout << "Enter book ID :" << std::endl;
         std::cin.ignore();
         getline(std::cin,book_id);
-        if(valid_book_id)
+
+        if(valid_book_id(book_id))
             std::cout << "book opened" << std::endl;
         else
             std::cout << "Incorect book ID \n Try again" << std::endl;
         return;
     }
-    bool id_exist(std::string name , std::string email , std::string password){
+    bool id_exists(std::string name , std::string email , std::string password){
         public_login_file.open("Public_logins.txt" , std::ios::in);
-    
+        if(public_login_file.eof()){
+            return false;
+        }
         while((!(public_login_file.eof())) &&
                 getline(public_login_file,temp_username,'*') &&
                 getline(public_login_file,temp_email_adress,'*') &&
@@ -89,6 +97,7 @@ public:
                 return true;
             }
         public_login_file.close();
+        return true;
     }
     void login(){
         std::cout << "----------------------Login Meniu------------------------" <<std::endl;
@@ -96,20 +105,26 @@ public:
         std::cout << "Enter your Name : " ;
         getline(std::cin, name);
 
-         std::cout << "Enter your Email Id : " << std::endl;
+        std::cout << "Enter your Email Id : " << std::endl;
         getline(std::cin, email);
 
-         std::cout << "Enter your Password : " << std::endl;
+        std::cout << "Enter your Password : " << std::endl;
         getline(std::cin, password);
 
-        if(id_exist(name, email, password))
+        if(id_exists(name, email, password)){
+            show_all_books();
+            choos_book();
+        }
+        else{
+            std::cout<<"Could not find ID \n\n Please try again " << std::endl;
             login();
-        else
-            std::cout<<"Could not find id " << std::endl << std::endl << "Pleas try again " << std::endl;
+        }
+
         return;
     }
-    void registe(){
+    void public_registe(){
         std::cout << "----------------Register-------------------" << std::endl;
+
         std::cout << "Enter username : ";
         getline(std::cin, temp_username);
 
@@ -139,16 +154,23 @@ public:
     
     void add_book(){
         std::cout << "--------------------------------------------------" <<std::endl;
+
         std::cout << "Enter book id :: " ;
         std::cin >> id;
+
         std::cout << "Enter book name :: " ;
         std::cin.ignore();
         getline(std::cin, book);
+
         std::cout << "Enter book's Auther name ::";
         getline(std::cin,auther);
+
         book_file.open("Book_list.txt",std::ios :: out | std::ios :: app);
+
         book_file << id << "*" << book << "*" << auther << std::endl;
+
         book_file.close();
+
         return;
     }
 
@@ -159,13 +181,16 @@ public:
             std::cout << "1. Add New book " << std::endl;
             std::cout << "2. Remove Book " << std::endl;
             std::cout << "3. Exit " << std::endl;
+
             char choise;
             std::cin>> choise;
+
             switch(choise){
                 case '1':
                     add_book();
                     break;
                 case '2':
+                    std::cout << "remove_book function called" << std::endl;
                     //remove_book();
                     break;
                 case '3':
@@ -202,14 +227,18 @@ public:
         }
     void login(){
         std::cout << "----------------------------" <<std::endl;
+
         std::cout << "Enter your Name : " ;
         getline(std::cin,name);
+
          std::cout << "Enter your Email Id : " ;
         getline(std::cin,email);
+
          std::cout << "Enter your Password : " ;
         getline(std::cin,password);
+
         if(id_exist(name, email , password)){
-            menu;
+            menu();
             return;
         }
         else
@@ -217,7 +246,7 @@ public:
         return;
     }
 
-    void registe(){
+    void admin_registe(){
         std::cout << "Enter username : ";
         getline(std::cin, temp_username);
 
@@ -238,7 +267,7 @@ public:
 
 // Admin class ends
 
-void regis(){
+void register_menu(){
     while(true){
         std::cout << "------------------------" <<std::endl;
         std::cout << "1. Login as new user" <<std::endl;
@@ -249,24 +278,23 @@ void regis(){
         switch (ch){
             case '1':
                std:: cin.ignore();
-                Pub.registe();
+                Pub.public_registe();
                 return;
             case '2':
                 std::cin.ignore();
-                Adm.registe();
+                Adm.admin_registe();
                 return;
             case '3':
                 std::cin.ignore();
                 return;
             default:
                 std::cout << "Invalid opration"<< std::endl;
-                regis();
                 break;
         }
     }
     return;
 }
-void login_menu(){
+int main(){
     while(true)
     {
         std::cout << "--------Labriry Management-----------" <<std::endl;
@@ -281,22 +309,21 @@ void login_menu(){
             case '1':
                 std::cin.ignore();
                 Pub.login();
+                break;
             case '2':
                 std::cin.ignore();
                 Adm.login();
+                break;
             case '3':
                 std::cin.ignore();
-                regis();
+                register_menu();
+                break;
             case '4':
-                return;
+                return 0;
             default:
                 std::cout << "Incorrect input " << std::endl;
                 std::cout << "Try again" << std::endl;
         } 
     }
-    return;
-}
-int main(){
-    login_menu();
     return 0;   
 }
