@@ -9,7 +9,6 @@ protected:
 public:
     std::fstream book_file;
     std::string id;
-    std::string nam ;
     std::string name; 
     std::string temp_username;
     std::string email ;
@@ -19,6 +18,38 @@ public:
     std::string book;
     std::string auther;
     size_t mobile_no;
+
+    bool email_check(std::string email){
+        if(email.length() < 5)
+            return false;
+        
+        int i = 0;
+        bool condition_1 = false, condition_2 = false;
+
+        while(i < email.length()){
+            if(email[i] == '@')
+                condition_1 = true;
+            i++;
+        }
+        while(i < email.length()){
+            if(email[i] == '.')
+                condition_2 = true;
+            i++;
+        }
+        return (condition_1 & condition_2);
+    }
+    bool password_check(std::string password){
+        uint8_t i = 0;
+        bool check = false;
+        while (i < password.length()){
+            if(password[i] == '!' && password[i] == '@' && password[i] == '$' && password[i] == '%' && password[i] == '^' && password[i] == '&'  && password[i] == '*' && password[i] == '(' && password[i] == ')' && password[i] == '_' && password[i] == '=' && password[i] == '/'){
+                check = true;
+                break;
+            }
+                i++;
+        }
+        return check;
+    }
 };
 
 
@@ -122,6 +153,18 @@ public:
 
         return;
     }
+    bool is_username(std::string username){
+         public_login_file.open("Public_logins.txt" , std::ios::in);
+        if(public_login_file.eof()){
+            return false;
+        }
+        while((!(public_login_file.eof())) && getline(public_login_file,temp_username,'*') && getline(public_login_file,temp_email_adress,'*') &&getline(public_login_file,temp_password,'\n')){
+                if(name != temp_username){
+                    continue;
+                }
+            }
+        
+    }
     void public_registe(){
         std::cout << "----------------Register-------------------" << std::endl;
 
@@ -130,9 +173,19 @@ public:
 
         std::cout << "Enter email adress : ";
         getline(std::cin, temp_email_adress);
+        if(!email_check(temp_email_adress)){
+            std::cout << "Incorrect email address format \nTry again" << std::endl;
+            public_registe();
+            return;
+        }
 
         std::cout << "Enter password : ";
         getline(std::cin, temp_password);
+        if(password_check(password)){
+            std::cout << "Incorrect password formate\nTry again" << std::endl;
+            public_registe();
+            return;
+        }
 
         public_login_file.open("Public_logins.txt", std::ios ::out | std::ios::app);
         public_login_file << temp_username << "*" << temp_email_adress << "*" << temp_password << std::endl;
@@ -276,8 +329,8 @@ void register_menu(){
         char ch;
         std::cin >> ch;
         switch (ch){
+            std:: cin.ignore();
             case '1':
-               std:: cin.ignore();
                 Pub.public_registe();
                 return;
             case '2':
