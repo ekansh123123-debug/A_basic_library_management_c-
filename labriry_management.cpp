@@ -73,7 +73,6 @@ public:
         std::cout << "---------------------------------------------------" << std::endl;
         return;
     }
-
     bool valid_book_id(std::string book_id){
         book_file.open("Book_list.txt",std::ios :: in);
 
