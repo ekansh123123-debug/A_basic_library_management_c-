@@ -88,18 +88,37 @@ public:
         return false;
     }
     void choos_book(){
-        std::string book_id;
-        std::cout << "----------------------Liabrari--------------------" <<std::endl;
+        while(true){
+            std::string book_id;
+            std::cout << "----------------------Liabrari--------------------" <<std::endl;
+            std::cout << "Chouse how you want to enter the book" << std::endl;
+            std::string st ;
+            std::cin >> st;
+            switch (st){
+                case "1":
+                    std::cout << "Enter book ID :" << std::endl;
+                    std::cin.ignore();
+                    getline(std::cin,book_id);
 
-        std::cout << "Enter book ID :" << std::endl;
-        std::cin.ignore();
-        getline(std::cin,book_id);
-
-        if(valid_book_id(book_id))
-            std::cout << "book opened" << std::endl;
-        else
-            std::cout << "Incorect book ID \n Try again" << std::endl;
-        return;
+                    if(valid_book_id(book_id)){
+                        std::cout << "book opened" << std::endl;
+                        return;
+                    }
+                    else
+                        std::cout << "Incorect book ID \n Try again" << std::endl;
+                    break;
+                case "2":
+                    
+                    break;
+                case "3"
+                    
+                    return;
+                default:
+                    
+                    break;
+            }
+            
+        }
     }
     bool id_exists(std::string name , std::string email , std::string password){
         public_login_file.open("Public_logins.txt" , std::ios::in);
