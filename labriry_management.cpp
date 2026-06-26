@@ -76,9 +76,8 @@ public:
     bool valid_book_id(std::string book_id){
         book_file.open("Book_list.txt",std::ios :: in);
 
-        while(getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
+        while(book_file.eof() && getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
             if(book_id == id){
-                std::cout << "Book opened:" <<std::endl;
                 book_file.close();
                 return true;
             }
@@ -87,34 +86,61 @@ public:
         book_file.close();
         return false;
     }
+    bool valid_book_name(std::string book_name){
+        book_file.open("Book_list.txt",std::ios :: in);
+
+        while(book_file.eof() && getline(book_file,id,'*') && getline(book_file,book,'*') && getline(book_file,auther,'\n')){
+            if(book_name == book){
+                book_file.close();
+                return true;
+            }
+        }
+
+        book_file.close();
+        return false;
+    }
+    void find_book_via_id(){
+        std::cout << "Enter book ID :" << std::endl;
+        std::string book_id;
+        
+        std::cin >> book_id;
+
+        if(valid_book_id(book_id)){
+            std::cout << "book opened" << std::endl;
+            return;
+        }
+        std::cout << "Incorect book ID \nTry again" << std::endl;
+        return;
+    }
+    void find_book_via_name(){
+        std::string book_name;
+        std::cout << "Enter book name" << std::endl;
+        if(valid_book_name(book_name)){
+            std::cout << "book opened" << std::endl;
+        }
+        std::cout << "Incorrect book name\nTry again" << std:: endl;
+        return;
+    }
     void choos_book(){
         while(true){
-            std::string book_id;
             std::cout << "----------------------Liabrari--------------------" <<std::endl;
             std::cout << "Chouse how you want to enter the book" << std::endl;
-            std::string st ;
-            std::cin >> st;
-            switch (st){
-                case "1":
-                    std::cout << "Enter book ID :" << std::endl;
-                    std::cin.ignore();
-                    getline(std::cin,book_id);
+            std::cout << "1. BY BOOK ID\n2. BY BOOk Name\n3. Return to privius page " << std::endl;
 
-                    if(valid_book_id(book_id)){
-                        std::cout << "book opened" << std::endl;
-                        return;
-                    }
-                    else
-                        std::cout << "Incorect book ID \n Try again" << std::endl;
+            char st ;
+            std::cin >> st;
+
+            switch (st){
+                case '1':
+                    find_book_via_id();
                     break;
-                case "2":
-                    
+                case '2':
+                    find_book_via_name();
                     break;
-                case "3"
-                    
+                case '3':
                     return;
                 default:
-                    
+                    std::cout << "Invalid input\nPleas try again" << std::endl;
                     break;
             }
             
